@@ -1,0 +1,6 @@
+:host { margin: 5px; }
+h2 { color: #f90; }
+ui-button.red { width: 90px }
+ui-button.blue { width: 90px }
+ui-button.green { width: 90px }
+span.text1 { width: 70px; text-align:center; }
