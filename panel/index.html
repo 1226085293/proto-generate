@@ -1,0 +1,28 @@
+<h2>proto-生成配置</h2>
+    <div class="layout vertical fit"></div>
+        <ui-prop name="proto文件位置:" tooltip="">
+            <ui-input placeholder="" disabled class="flex-1" v-value="local.storage_path"></ui-input>
+            <ui-button v-on:confirm="selete_storage" class="blue">选择目录</ui-button>
+            <ui-button v-on:confirm="open_storage" v-show="this.local.storage_path!==null && this.local.storage_path.length">打开目录 </ui-button>
+        </ui-prop>
+        <ui-prop name="文件导出位置:" tooltip="">
+            <ui-input placeholder="" disabled class="flex-1" v-value="local.output_path"></ui-input>
+            <ui-button v-on:confirm="selete_output" class="blue">选择目录</ui-button>
+            <ui-button v-on:confirm="open_output" v-show="this.local.output_path!==null && this.local.output_path.length">打开目录 </ui-button>
+        </ui-prop>
+        <ui-prop name="输出文件名:" tooltip="">
+            <ui-input placeholder="例: msg(生成为msg.js/msg.d.ts)" v-disabled="!edit" class="flex-1" v-value="local.output_name"></ui-input>
+            <ui-button v-on:confirm="modify_name" class="blue" v-show="!edit">编辑</ui-button>
+            <ui-button v-on:confirm="cancel_name" class="red" v-show="edit">取消</ui-button>
+            <ui-button v-on:confirm="save_name" class="green" v-show="edit">保存</ui-button>
+        </ui-prop>
+        <ui-prop name="替换内容:" tooltip="">
+            <ui-input placeholder="不输入则模拟不替换" v-disabled="!replace" class="flex-1" v-value="local.replace_text1"></ui-input>
+            <span class="text1">替换为</span>
+            <ui-input placeholder="不输入则模拟不替换" v-disabled="!replace" class="flex-1" v-value="local.replace_text2"></ui-input>
+            <ui-button v-on:confirm="modify_replace" class="blue" v-show="!replace">编辑</ui-button>
+            <ui-button v-on:confirm="cancel_replace" class="red" v-show="replace">取消</ui-button>
+            <ui-button v-on:confirm="save_replace" class="green" v-show="replace">保存</ui-button>
+        </ui-prop>
+    </div>
+<hr />
