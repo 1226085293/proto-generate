@@ -64,7 +64,7 @@ Editor.Panel.extend({
 
 				/**选择存储路径 */
 				selete_storage() {
-					let default_path = `${Editor.Project.path}\\assets`;
+					let default_path = `${Editor.Project.path}/\\assets`;
 					let res = Editor.Dialog.openFile({
 						title: "选择UI绑定脚本输出路径",
 						defaultPath: default_path,
