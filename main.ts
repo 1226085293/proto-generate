@@ -29,12 +29,23 @@ module main {
 	const log_o: log = log.instance();
 	const storage_o: storage = storage.instance();
 
+	/**忙碌状态 */
+	let busy_b = false;
+	/**任务列表 */
+	let task_list_as: any[] = [];
 	export let data = {
 		local_o: storage_o.cache_a,
 	};
 	// load () {},
 	// unload () {},
-	
+	/**设置忙碌状态 */
+	function set_busy(v_b_: boolean): void {
+		busy_b = v_b_;
+		if (!busy_b && task_list_as.length) {
+			update_proto(task_list_as.shift());
+		}
+	}
+	/**剔除函数 */
 	function del_func(v_s_: string, func_s_: string): string {
 		try {
 			if (!v_s_ || !func_s_) {
@@ -72,9 +83,16 @@ module main {
 			log_o.e(err_a);
 		}
 	};
+	/**更新生成proto */
 	function update_proto(path_s: string): void {
+		if (busy_b) {
+			task_list_as.push(path_s);
+			return;
+		}
+		set_busy(true);
 		// ------------------文件验证
 		if (path_s.indexOf("proto") == -1) {
+			set_busy(false);;
 			return;
 		}
 		path_s = path_s.replace(/\\/g, "/");
@@ -82,29 +100,35 @@ module main {
 		// ------------------验证文件名/路径
 		if (temp1_n == -1 || storage_o.cache_a.storage_path_s.replace(/\\/g, "/").indexOf(path_s.substring(0, path_s.lastIndexOf("/"))) == -1) {
 			// log_o.e("验证文件名/路径失败!");
+			set_busy(false);;
 			return;
 		}
 		// ------------------验证文件后缀名
 		if (path_s.substring(temp1_n, path_s.length) != "proto") {
 			// log_o.e("验证文件后缀名失败!");
+			set_busy(false);;
 			return;
 		}
 		// ------------------验证存储路径
 		if (!storage_o.cache_a.storage_path_s) {
 			log_o.e("未配置存储路径, 请检查后重试!");
+			set_busy(false);;
 			return;
 		}
 		if (!fs.existsSync(storage_o.cache_a.storage_path_s)) {
 			log_o.e("存储路径不存在, 请检查后重试!");
+			set_busy(false);;
 			return;
 		}
 		// ------------------验证输出路径
 		if (!storage_o.cache_a.output_path_s) {
 			log_o.e("未配置输出路径, 请检查后重试!");
+			set_busy(false);;
 			return;
 		}
 		if (!fs.existsSync(storage_o.cache_a.output_path_s)) {
 			log_o.e("输出路径不存在, 请检查后重试!");
+			set_busy(false);;
 			return;
 		}
 		storage_o.update();
@@ -117,6 +141,7 @@ module main {
 		temp1_s += "/node_modules/protobufjs/bin";
 		if (!fs.existsSync(temp1_s)) {
 			log_o.e("未找到protobuf模块!");
+			set_busy(false);;
 			return;
 		}
 		// ------------------生成js
@@ -126,6 +151,7 @@ module main {
 		}, (err_a: any, stdout_a: any, stderr_a: any) => {
 			if (err_a) {
 				log_o.e(`${err_a}`, stdout_a, stderr_a);
+				set_busy(false);;
 				return;
 			}
 			// ------------------修改导入
@@ -133,6 +159,7 @@ module main {
 				fs.readFile(`${storage_o.cache_a.output_path_s}/${storage_o.cache_a.output_name_s}.js`, 'utf-8', (err_a: any, data_s: any) => {
 					if (err_a) {
 						log_o.e("修改导入失败(读取)", err_a);
+						set_busy(false);;
 						return;
 					}
 					// 替换内容
@@ -159,6 +186,7 @@ module main {
 					fs.writeFile(`${storage_o.cache_a.output_path_s}/${storage_o.cache_a.output_name_s}.js`, data_s, (err, data) => {
 						if (err) {
 							log_o.e("修改导入失败(写入)", err);
+							set_busy(false);;
 							return;
 						}
 						// ------------------压缩代码
@@ -177,6 +205,7 @@ module main {
 						Editor.assetdb.refresh(`db://${temp_path}/${storage_o.cache_a.output_name_s}.js`, (err_a: any)=> {
 							if (err_a) {
 								log_o.e("刷新资源失败", err_a);
+								set_busy(false);;
 								return;
 							}
 						});
@@ -187,11 +216,13 @@ module main {
 						}, (err_a: any, stdout_a: any, stderr_a: any) => {
 							if (err_a) {
 								log_o.e(err_a, stdout_a, stderr_a);
+								set_busy(false);;
 								return;
 							}
 							Editor.assetdb.refresh(`db://${temp_path}/${storage_o.cache_a.output_name_s}.d.ts`, (err_a: any)=> {
 								if (err_a) {
 									log_o.e("刷新资源失败", err_a);
+									set_busy(false);;
 									return;
 								}
 							});
@@ -206,6 +237,7 @@ module main {
 				Editor.assetdb.refresh(`db://${temp_path}/${storage_o.cache_a.output_name_s}.js`, function(err_a: any) {
 					if (err_a) {
 						log_o.e("刷新资源失败", err_a);
+						set_busy(false);;
 						return;
 					}
 				});
@@ -215,11 +247,13 @@ module main {
 				}, (err_a: any, stdout_a: any, stderr_a: any) => {
 					if (err_a) {
 						log_o.e(err_a, stdout_a, stderr_a);
+						set_busy(false);;
 						return;
 					}
 					Editor.assetdb.refresh(`db://${temp_path}/${storage_o.cache_a.output_name_s}.d.ts`, (err_a: any)=> {
 						if (err_a) {
 							log_o.e("刷新资源失败", err_a);
+							set_busy(false);;
 							return;
 						}
 					});
@@ -227,6 +261,7 @@ module main {
 				});
 			}
 		});
+		set_busy(false);;
 	}
 	// register your ipc messages here
 	export const messages = {
