@@ -1,3 +1,3 @@
 module.exports={
-    title:'proto-generate',
+    title:'proto-generates_config',
 };

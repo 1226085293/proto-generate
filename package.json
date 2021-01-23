@@ -2,22 +2,22 @@
   "name": "proto-generate",
   "version": "1.0.0",
   "description": "The package template for getting started.",
-  "author": "Cocos Creator",
-  "main": "main.js",
+  "author": "muzzik",
+  "main": "./js/proto-generate/main.js",
   "main-menu": {
     "i18n:MAIN_MENU.package.title/i18n:proto-generate.title": {
-      "message": "proto-generate:open",
-      "accelerator": "CmdOrCtrl+Shift+p"
+      "message": "proto-generate:open"
     }
   },
   "panel": {
-    "main": "panel/index.js",
+    "main": "./js/proto-generate/panel/index.js",
     "type": "dockable",
     "title": "muzzik插件",
     "engineSupport": true,
     "width": 820,
-    "height": 200
+    "height": 260
   },
   "dependencies": {
+    "uglify-js": "^3.12.5"
   }
 }
